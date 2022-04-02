@@ -1,72 +1,78 @@
-var playervalue
-var playerScore;
-var compScore;
-
-// Makes the input of the correct type
-function Uniquestring(playervalue){
-    var str1 = playervalue.charAt(0).toUpperCase()+playervalue.slice(1).toLowerCase();
-    return str1
-}
+let choice = ["Rock","Paper","Scissor"];
+let playerScore=0;
+let compScore=0;
 
 //randomises computer value
 function computerPlay(){
-    var comp = ["Rock","Scissor","Paper"];
-    var compSelection = comp[Math.floor(Math.random()*comp.length)];
+    let compSelection = choice[Math.floor(Math.random()*choice.length)];
     return compSelection;
 }
-
-// plays one round of the game
-function playRound(playerSelection, compSelection){
+//playing a round of the game
+function checkwin(playerSelection, compSelection){
     if(playerSelection===compSelection){
-        return("Draw!");
+        return["Draw!",'grey'];
     }
     if(playerSelection==="Rock"&&compSelection==="Scissor"){
-        return("You Win! Rock beats Scissor!");
+        playerScore++;
+        return["You Win! Rock beats Scissor!",'green'];
     }
     if(playerSelection==="Paper"&&compSelection==="Rock"){
-        return("You Win! Paper beats Rock!");
+        playerScore++;
+        return["You Win! Paper beats Rock!",'green'];
     }
     if(playerSelection==="Scissor"&&compSelection==="Paper"){
-        return("You Win! Scissor beats Paper!");
+        playerScore++;
+        return["You Win! Scissor beats Paper!",'green'];
     }
     if(playerSelection==="Scissor"&&compSelection==="Rock"){
-        return("You Lose! Rock beats Scissor!");
+        compScore++;
+        return["You Lose! Rock beats Scissor!",'red'];
     }
     if(playerSelection==="Rock"&&compSelection==="Paper"){
-        return("You Lose! Paper beats Rock!");
+        compScore++;
+        return["You Lose! Paper beats Rock!",'red'];
     }
     if(playerSelection==="Paper"&&compSelection==="Scissor"){
-        return("You Lose! Scissor beats Paper");
+        compScore++;
+        return["You Lose! Scissor beats Paper",'red'];
     }
 }
+//updates the score
+function playRound(playerSelection){
+    let compSelection;
+    compSelection = computerPlay();
+    let result = checkwin(playerSelection,compSelection);
+    const statusBar = document.querySelector('.status');
+    if(compScore==5){
+        console.log(`The computer has won by ${compScore}-${playerScore}!`);
+        document.querySelector('.status').textContent = `The computer has won by a score of ${playerScore} - ${compScore}!`;
+        document.querySelector('.status').style.color="red";
+        document.querySelector('.player-score').textContent = 0;
+        document.querySelector('.comp-score').textContent = 0;
+        playerScore = 0;
+        compScore = 0;
+    }
+    if(playerScore==5){
+        document.querySelector('.status').textContent = `You have won by a score of ${playerScore} - ${compScore}!`;
+        document.querySelector('.status').style.color="green";
+        document.querySelector('.player-score').textContent = 0;
+        document.querySelector('.comp-score').textContent = 0;
+        playerScore = 0;
+        compScore = 0;
+    }
+    else{
+        statusBar.textContent = result[0];
+        statusBar.style.color = result[1];
+    }
+    document.querySelector('.player-score').textContent = playerScore;
+    document.querySelector('.comp-score').textContent = compScore;
+}
+//initialising the game
 function game(){
-    playerScore=0;
-    compScore=0;
-    for(let i = 0; i<5;i++){
-        var compSelection = computerPlay();
-        var playervalue = window.prompt("Rock Paper or Scissor?");
-        var playerSelection = Uniquestring(playervalue);
-        console.log(playRound(playerSelection,compSelection));
-        if(playRound(playerSelection,compSelection).charAt(4)==="W"){
-            playerScore++;
-            continue;
-        }
-        if(playRound(playerSelection,compSelection).charAt(4)==="L"){
-            compScore++;
-            continue;
-        }
-        if(playRound(playerSelection,compSelection).charAt(0)==="D"){
-            continue;
-        }
-    }
-    if(playerScore>compScore){
-        return "You Win the Game!";
-    }
-    if(playerScore<compScore){
-        return "You Lose the Game!"
-    }
-    if(playerScore=compScore){
-        return "Draw Game!"
-    }
+    choice.forEach(playerSelection =>{
+        document.querySelector(`.${playerSelection}`).addEventListener('click',function(){
+            playRound(playerSelection);
+        });
+    });
 }
-console.log(game());
+game();
